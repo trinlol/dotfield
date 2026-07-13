@@ -42,6 +42,7 @@ L("UI + docs structure tests");
 test("main index has no pause-btn", function () {
   var html = fs.readFileSync(path.join(root, "index.html"), "utf8");
   assert.ok(html.indexOf("pause-btn") === -1, "pause-btn must be absent");
+  assert.ok(html.indexOf('href="test-site/"') === -1, "test site should not be in primary home nav");
   assert.ok(!/\bPause\b/.test(html.replace(/<!--[\s\S]*?-->/g, "")), "no Pause label in page");
   assert.ok(html.indexOf('id="preview"') !== -1);
   assert.ok(html.indexOf("docs/") !== -1 || html.indexOf("href=\"docs") !== -1, "nav link to docs");
@@ -99,6 +100,7 @@ test("docs page exists with extensive sections", function () {
   // Non-trivial length
   assert.ok(docs.length > 8000, "docs should be extensive, got " + docs.length);
   assert.ok(fs.existsSync(path.join(root, "docs", "docs.css")), "docs.css");
+  assert.ok(docs.indexOf("/test-site/") !== -1, "docs should link to the npm consumer test site");
   L("        docs length=" + docs.length);
 });
 
