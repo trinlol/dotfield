@@ -319,6 +319,7 @@ const snap = sim.getSnapshot();</code></pre>
             <tr><td><code>destroy()</code></td><td>Stop, unbind listeners, clear particles</td></tr>
             <tr><td><code>pause()</code> / <code>resume()</code> / <code>togglePause()</code></td><td>Programmatic pause (no site UI button)</td></tr>
             <tr><td><code>isRunning()</code> / <code>isPaused()</code></td><td>State flags</td></tr>
+            <tr><td><code>isAutoPaused()</code></td><td>Whether visibility/intersection safeguards currently suppress simulation</td></tr>
           </tbody>
         </table>
       </section>
@@ -356,6 +357,8 @@ const snap = sim.getSnapshot();</code></pre>
             <tr><td><code>count</code></td><td>Exact particle count (respawns)</td></tr>
             <tr><td><code>density</code></td><td>Relative density when count is automatic</td></tr>
             <tr><td><code>quality</code></td><td><code>'high'</code> | <code>'medium'</code> | <code>'low'</code> — DPR, glow, particle defaults</td></tr>
+            <tr><td><code>adaptiveQuality</code></td><td>Reduces draw work when measured FPS drops; simulation remains deterministic</td></tr>
+            <tr><td><code>autoPause</code></td><td>Pauses animation work while the document is hidden or the canvas is offscreen</td></tr>
             <tr><td><code>glow</code></td><td>Soft radial glow highlights (costly on large fields)</td></tr>
             <tr><td><code>interactive</code></td><td>Enable pointer / mouse forces on the canvas</td></tr>
           </tbody>

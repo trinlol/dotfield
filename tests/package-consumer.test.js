@@ -33,6 +33,8 @@ log("consumer: " + consumerDir);
 var pkg = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
 assert.ok(pkg.main, "package.main");
 assert.ok(pkg.exports, "package.exports");
+assert.strictEqual(pkg.types, "index.d.ts", "package.types points at declarations");
+assert.ok(fs.existsSync(path.join(root, pkg.types)), "type declarations are shipped");
 log("package name=" + pkg.name + " main=" + pkg.main + " version=" + pkg.version);
 
 // Install dependency into consumer

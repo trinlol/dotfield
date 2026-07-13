@@ -307,8 +307,17 @@ main,
   transition: transform 0.3s var(--ease), opacity 0.25s, box-shadow 0.3s;
 }
 
-/* Sun in light mode (click to go dark) */
+/* Moon in light mode (click to go dark) */
 [data-theme="light"] .theme-toggle .theme-icon::before {
+  width: 0.7rem;
+  height: 0.7rem;
+  background: transparent;
+  box-shadow: inset -0.28rem -0.1rem 0 0 var(--accent);
+  border-radius: 50%;
+}
+
+/* Sun in dark mode (click to go light) */
+[data-theme="dark"] .theme-toggle .theme-icon::before {
   width: 0.55rem;
   height: 0.55rem;
   background: var(--accent);
@@ -321,15 +330,6 @@ main,
     -0.27rem 0.27rem 0 -0.18rem var(--accent),
     0.27rem -0.27rem 0 -0.18rem var(--accent),
     -0.27rem -0.27rem 0 -0.18rem var(--accent);
-}
-
-/* Moon in dark mode (click to go light) */
-[data-theme="dark"] .theme-toggle .theme-icon::before {
-  width: 0.7rem;
-  height: 0.7rem;
-  background: transparent;
-  box-shadow: inset -0.28rem -0.1rem 0 0 var(--accent);
-  border-radius: 50%;
 }
 
 /* —— Hero —— */

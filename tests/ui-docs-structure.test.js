@@ -107,6 +107,19 @@ test("docs linked from main nav", function () {
   assert.ok(/href=["']docs\/?["']/.test(html) || /href=["']docs\//.test(html));
 });
 
+test("theme icons match the mode switch action", function () {
+  ["styles.css", path.join("docs", "docs.css")].forEach(function (relativePath) {
+    var css = fs.readFileSync(path.join(root, relativePath), "utf8");
+    var light = css.match(/\[data-theme="light"\] \.theme-toggle \.theme-icon::before\s*\{([\s\S]*?)\}/);
+    var dark = css.match(/\[data-theme="dark"\] \.theme-toggle \.theme-icon::before\s*\{([\s\S]*?)\}/);
+    assert.ok(light && dark, relativePath + " must define both theme icons");
+    assert.ok(/background:\s*transparent/.test(light[1]), relativePath + " light mode should use the moon");
+    assert.ok(/inset\s+-0\.28rem/.test(light[1]), relativePath + " light mode should use a crescent");
+    assert.ok(/background:\s*var\(--accent\)/.test(dark[1]), relativePath + " dark mode should use the sun");
+    assert.ok(/0\s+-0\.38rem/.test(dark[1]), relativePath + " dark mode should include sun rays");
+  });
+});
+
 L("");
 L("Results: " + passed + " passed, " + failed + " failed");
 

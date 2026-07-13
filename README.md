@@ -36,6 +36,15 @@ field.destroy();
 
 Package entry: `main` + `exports` → `lib/dotfield.js`.
 
+TypeScript declarations are included at `index.d.ts`. Live fields automatically
+pause simulation while the document is hidden or the canvas is offscreen, and
+adapt draw density when frame rate drops. Disable either behavior with
+`autoPause: false` or `adaptiveQuality: false`.
+
+The published `lib/dotfield.js` artifact is assembled from ordered source
+fragments under `src/runtime/`. Run `npm run build` after changing runtime code;
+the package still ships as one browser/CommonJS-compatible file.
+
 See [`examples/package-consumer/`](https://github.com/trinlol/dotfield/tree/main/examples/package-consumer) in the repo for a minimal Node consumer sample.
 
 ## Gallery & docs

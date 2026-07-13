@@ -154,6 +154,14 @@ body.docs-body {
 }
 
 [data-theme="light"] .theme-toggle .theme-icon::before {
+  width: 0.7rem;
+  height: 0.7rem;
+  background: transparent;
+  box-shadow: inset -0.28rem -0.1rem 0 0 var(--accent);
+  border-radius: 50%;
+}
+
+[data-theme="dark"] .theme-toggle .theme-icon::before {
   width: 0.55rem;
   height: 0.55rem;
   background: var(--accent);
@@ -166,14 +174,6 @@ body.docs-body {
     -0.27rem 0.27rem 0 -0.18rem var(--accent),
     0.27rem -0.27rem 0 -0.18rem var(--accent),
     -0.27rem -0.27rem 0 -0.18rem var(--accent);
-}
-
-[data-theme="dark"] .theme-toggle .theme-icon::before {
-  width: 0.7rem;
-  height: 0.7rem;
-  background: transparent;
-  box-shadow: inset -0.28rem -0.1rem 0 0 var(--accent);
-  border-radius: 50%;
 }
 
 .docs-logo {
