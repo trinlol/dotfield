@@ -36,24 +36,22 @@ field.destroy();
 
 Package entry: `main` + `exports` → `lib/dotfield.js`.
 
-See `examples/package-consumer/` for a fresh `require("dotfield")` install via `file:`.
+See [`examples/package-consumer/`](https://github.com/trinlol/dotfield/tree/main/examples/package-consumer) in the repo for a minimal Node consumer sample.
 
-## Gallery site
+## Gallery & docs
+
+- **Live demo:** https://trinlol.github.io/dotfield/
+- **Docs:** https://trinlol.github.io/dotfield/docs/
+
+Local preview (optional):
 
 ```bash
-npm start
-# http://localhost:8080
+npm start   # static server; open the printed URL (default http://localhost:8080)
 ```
 
-- **Backdrop** full-page field uses a **fixed** mode (gallery never changes it)
-- **Large live preview** in the gallery updates on mode selection
-- Search / filter thousands of modes; copy mode id + install snippet
-
-## Documentation
-
-Full open-source style docs (install, API, customization, modes, examples):
-
-**[docs/](docs/)** → `http://localhost:8080/docs/` after `npm start`
+- **Backdrop** full-page field uses a rotating full-field mode (gallery never changes it)
+- **Large live preview** updates on mode selection
+- Search / filter modes; copy mode id + install snippet
 
 ## Customization options
 

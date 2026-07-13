@@ -125,12 +125,13 @@
 
       <section id="install" class="doc-section">
         <h2>Installation</h2>
-        <p>Install Dotfield as a dependency (preferred path):</p>
-        <pre class="code-block"><code>npm install dotfield
-
-# From this repository (local / monorepo):
-npm install file:./path/to/dot-art-site</code></pre>
-        <p>The package entry is defined by <code>main</code> and <code>exports</code> → <code>lib/dotfield.js</code>.</p>
+        <p>Install Dotfield as a dependency:</p>
+        <pre class="code-block"><code>npm install dotfield</code></pre>
+        <p>
+          Package page:
+          <a href="https://www.npmjs.com/package/dotfield" rel="noopener noreferrer">npmjs.com/package/dotfield</a>.
+          Entry is <code>main</code> / <code>exports</code> → <code>lib/dotfield.js</code>.
+        </p>
         <h3>CommonJS</h3>
         <pre class="code-block"><code>const Dotfield = require('dotfield');</code></pre>
         <h3>ES modules / bundlers</h3>
@@ -606,15 +607,20 @@ console.log(sim.getPositions().length);</code></pre>
 
       <section id="gallery-site" class="doc-section">
         <h2>Gallery site</h2>
-        <p>This repository includes a marketing + gallery page:</p>
+        <p>
+          Live demo:
+          <a href="https://trinlol.github.io/dotfield/" rel="noopener noreferrer">trinlol.github.io/dotfield</a>
+          · docs:
+          <a href="https://trinlol.github.io/dotfield/docs/" rel="noopener noreferrer">/docs/</a>
+        </p>
+        <p>To run the gallery from a clone (optional):</p>
         <pre class="code-block"><code>npm start
-# open http://localhost:8080</code></pre>
+# then open the URL printed by the static server (default :8080)</code></pre>
         <ul>
           <li><strong>Backdrop</strong> — full-page field, fixed mode, not changed by gallery picks</li>
           <li><strong>Preview stage</strong> — large live canvas; mode select only updates this field</li>
-          <li><strong>Preview controls</strong> — dot/bg colour, speed, intensity, density, cursor mode (repel/attract/swirl), force, radius, trail/stain, rainbow, glow, flip spin</li>
-          <li><strong>Install section</strong> — npm / require snippets mirror the current preview settings</li>
-          <li><strong>Docs</strong> — this page at <code>/docs/</code></li>
+          <li><strong>Preview controls</strong> — colour, motion, cursor (on/off, mode, force, radius, smooth, auto), trail, rainbow…</li>
+          <li><strong>Install section</strong> — npm snippets mirror the current preview settings</li>
         </ul>
       </section>
 
