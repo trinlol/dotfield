@@ -51,7 +51,6 @@ See [`examples/package-consumer/`](https://github.com/trinlol/dotfield/tree/main
 
 - **Live demo:** https://trinlol.github.io/dotfield/
 - **Docs:** https://trinlol.github.io/dotfield/docs/
-- **npm consumer test site:** https://trinlol.github.io/dotfield/test-site/
 
 Local preview (optional):
 

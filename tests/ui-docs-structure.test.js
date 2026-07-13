@@ -100,7 +100,6 @@ test("docs page exists with extensive sections", function () {
   // Non-trivial length
   assert.ok(docs.length > 8000, "docs should be extensive, got " + docs.length);
   assert.ok(fs.existsSync(path.join(root, "docs", "docs.css")), "docs.css");
-  assert.ok(docs.indexOf("/test-site/") !== -1, "docs should link to the npm consumer test site");
   L("        docs length=" + docs.length);
 });
 
