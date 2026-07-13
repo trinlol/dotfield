@@ -120,6 +120,12 @@ test("theme icons match the mode switch action", function () {
   });
 });
 
+test("docs TOC scroll spy handles nested headings", function () {
+  var docs = fs.readFileSync(path.join(root, "docs", "index.html"), "utf8");
+  assert.ok(docs.indexOf("getBoundingClientRect().top") !== -1, "TOC should use viewport positions");
+  assert.ok(docs.indexOf("sections[i].el.offsetTop") === -1, "TOC should not compare mixed offset parents");
+});
+
 L("");
 L("Results: " + passed + " passed, " + failed + " failed");
 

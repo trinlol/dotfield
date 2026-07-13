@@ -705,10 +705,12 @@ npm run test:browser     # Playwright probe (optional)</code></pre>
         if (sec) sections.push({ id: id, el: sec, link: a });
       });
       function onScroll() {
-        var y = window.scrollY + 100;
+        // Use viewport coordinates because the TOC mixes sections with nested h3/h4 headings.
+        // offsetTop is relative to each element's offset parent and makes nested entries drift.
+        var marker = 180;
         var current = sections[0];
         for (var i = 0; i < sections.length; i++) {
-          if (sections[i].el.offsetTop <= y) current = sections[i];
+          if (sections[i].el.getBoundingClientRect().top <= marker) current = sections[i];
         }
         links.forEach(function (l) { l.classList.remove("active"); });
         if (current) current.link.classList.add("active");
