@@ -46,6 +46,8 @@ test("main index has no pause-btn", function () {
   assert.ok(!/\bPause\b/.test(html.replace(/<!--[\s\S]*?-->/g, "")), "no Pause label in page");
   assert.ok(html.indexOf('id="preview"') !== -1);
   assert.ok(html.indexOf("docs/") !== -1 || html.indexOf("href=\"docs") !== -1, "nav link to docs");
+  assert.ok(html.indexOf('rel="icon"') !== -1, "main site favicon link");
+  assert.ok(fs.existsSync(path.join(root, "favicon.svg")), "favicon asset");
 });
 
 test("main.js has no pause-btn wiring or Space pause", function () {
@@ -100,6 +102,7 @@ test("docs page exists with extensive sections", function () {
   // Non-trivial length
   assert.ok(docs.length > 8000, "docs should be extensive, got " + docs.length);
   assert.ok(fs.existsSync(path.join(root, "docs", "docs.css")), "docs.css");
+  assert.ok(docs.indexOf('rel="icon"') !== -1, "docs favicon link");
   L("        docs length=" + docs.length);
 });
 
