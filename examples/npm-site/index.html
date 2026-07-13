@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0d1110" />
+    <title>Field Notes — Dotfield npm test</title>
+  </head>
+  <body>
+    <main class="site-shell">
+      <section class="hero" aria-labelledby="page-title">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="status-dot"></span> dotfield@1.1.1 / npm install</p>
+          <h1 id="page-title">A small field<br /><em>with a pulse.</em></h1>
+          <p class="intro">A minimal consumer test: one published package, one canvas, and a quiet surface that responds when you move through it.</p>
+          <div class="actions">
+            <button id="mode-button" type="button">Change motion</button>
+            <span id="mode-readout" role="status">flow · calm</span>
+          </div>
+        </div>
+        <div class="field-wrap" aria-label="Interactive Dotfield particle field">
+          <canvas id="field"></canvas>
+          <div class="field-caption"><span>live canvas</span><span id="particle-readout">loading</span></div>
+        </div>
+      </section>
+
+      <section class="notes" aria-label="Installation notes">
+        <p class="eyebrow">The proof</p>
+        <div class="note-grid">
+          <div>
+            <h2>Installed from the registry.</h2>
+            <p>This page imports the published <code>dotfield@1.1.1</code> package. Nothing is copied from the parent project at runtime.</p>
+          </div>
+          <pre><code>import Dotfield from "dotfield";
+
+const field = Dotfield.create(canvas, {
+  mode: "flow-calm-cw-mid",
+  fillParent: false,
+  palette: "ocean",
+});</code></pre>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
