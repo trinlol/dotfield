@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dotfield Documentation</title>
+  <meta name="description" content="Dotfield API docs — install, create, modes, customization, examples." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="docs.css" />
+  <script>
+    /* Default: system preference until user picks light/dark */
+    (function () {
+      try {
+        var pref = localStorage.getItem("dotfield-theme");
+        var t =
+          pref === "light" || pref === "dark"
+            ? pref
+            : matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+        document.documentElement.setAttribute("data-theme", t);
+        document.documentElement.style.colorScheme = t;
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body class="docs-body">
+  <header class="docs-top">
+    <a class="docs-logo" href="../">
+      <span class="logo-mark"></span>
+      Dotfield
+    </a>
+    <div class="docs-top-actions">
+      <nav class="docs-top-nav">
+        <a href="../">Home</a>
+        <a href="../#gallery">Gallery</a>
+        <a href="#install">Install</a>
+        <a href="#api">API</a>
+        <a href="#customization">Config</a>
+        <a href="#cursor">Cursor</a>
+        <a href="#modes">Modes</a>
+        <a href="#examples">Examples</a>
+      </nav>
+      <a
+        class="github-link"
+        href="https://github.com/trinlol/dotfield"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="GitHub"
+        title="GitHub"
+      >
+        <svg class="github-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <path
+            fill="currentColor"
+            d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.17 6.839 9.49.5.09.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0 1 12 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.167 22 16.418 22 12c0-5.523-4.477-10-10-10z"
+          />
+        </svg>
+      </a>
+      <button type="button" class="theme-toggle" data-theme-toggle aria-label="Switch theme">
+        <span class="theme-icon" aria-hidden="true"></span>
+        <span data-theme-label>Dark</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="docs-shell">
+    <aside class="docs-sidebar" aria-label="Table of contents">
+      <p class="sidebar-title">On this page</p>
+      <nav>
+        <a href="#introduction">Introduction</a>
+        <a href="#install">Installation</a>
+        <a href="#quickstart">Quick start</a>
+        <a href="#api">API reference</a>
+        <a href="#api-create" class="toc-sub">create</a>
+        <a href="#api-simulation" class="toc-sub">createSimulation</a>
+        <a href="#api-catalog" class="toc-sub">listModes / getMode</a>
+        <a href="#api-instance" class="toc-sub">Instance methods</a>
+        <a href="#api-setconfig" class="toc-sub">setConfig</a>
+        <a href="#api-lifecycle" class="toc-sub">Lifecycle</a>
+        <a href="#customization">Customization</a>
+        <a href="#cursor" class="toc-sub">Cursor interaction</a>
+        <a href="#cursor-disable" class="toc-sub">Disable cursor</a>
+        <a href="#cursor-options" class="toc-sub">Cursor options</a>
+        <a href="#trail-rainbow" class="toc-sub">Trail &amp; rainbow</a>
+        <a href="#modes">Modes &amp; catalog</a>
+        <a href="#examples">Examples</a>
+        <a href="#gallery-site">Gallery site</a>
+        <a href="#testing">Testing</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+    </aside>
+
+    <main class="docs-main">
+      <header class="docs-hero">
+        <p class="eyebrow">Documentation</p>
+        <h1>Dotfield</h1>
+        <p class="lede">
+          Zero-dependency living stipple particle library. Install as an npm package,
+          pick from thousands of named modes, and customize palette, density, speed, and motion.
+        </p>
+        <p class="version-line">Package <code>dotfield</code> · current API v<span id="doc-version">1.1.0</span></p>
+      </header>
+
+      <section id="introduction" class="doc-section">
+        <h2>Introduction</h2>
+        <p>
+          Dotfield draws a soft, film-like field of dots on a <code>&lt;canvas&gt;</code>.
+          Particles ride noise flow fields and geometric attractors. You select a
+          <strong>mode id</strong> from a large catalog, optionally override appearance
+          and intensity, and control the field with a small public API.
+        </p>
+        <ul>
+          <li><strong>Browser:</strong> <code>Dotfield.create(canvas, options)</code></li>
+          <li><strong>Headless / tests:</strong> <code>Dotfield.createSimulation(options)</code></li>
+          <li><strong>Catalog:</strong> <code>Dotfield.listModes()</code> / <code>getMode(id)</code></li>
+        </ul>
+        <p>
+          The demo site uses two independent fields: a fixed full-page <em>backdrop</em>
+          and a large gallery <em>preview</em> that switches modes when you pick a card.
+          Your app typically needs only one field.
+        </p>
+      </section>
+
+      <section id="install" class="doc-section">
+        <h2>Installation</h2>
+        <p>Install Dotfield as a dependency (preferred path):</p>
+        <pre class="code-block"><code>npm install dotfield
+
+# From this repository (local / monorepo):
+npm install file:./path/to/dot-art-site</code></pre>
+        <p>The package entry is defined by <code>main</code> and <code>exports</code> → <code>lib/dotfield.js</code>.</p>
+        <h3>CommonJS</h3>
+        <pre class="code-block"><code>const Dotfield = require('dotfield');</code></pre>
+        <h3>ES modules / bundlers</h3>
+        <pre class="code-block"><code>import Dotfield from 'dotfield';
+// or
+import * as Dotfield from 'dotfield';</code></pre>
+        <h3>Plain script tag (no bundler)</h3>
+        <p>
+          Point a script at the package main file (after install, typically
+          <code>node_modules/dotfield/lib/dotfield.js</code>). The library attaches
+          <code>window.Dotfield</code>.
+        </p>
+        <pre class="code-block"><code>&lt;script src="node_modules/dotfield/lib/dotfield.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  const field = Dotfield.create(document.getElementById('dots'), {
+    mode: 'flow-calm-cw-mid',
+    fillParent: true,
+  });
+&lt;/script&gt;</code></pre>
+      </section>
+
+      <section id="quickstart" class="doc-section">
+        <h2>Quick start</h2>
+        <pre class="code-block"><code>&lt;canvas id="dots"&gt;&lt;/canvas&gt;
+&lt;script src="node_modules/dotfield/lib/dotfield.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  const field = Dotfield.create(document.getElementById('dots'), {
+    mode: 'orbit-steady-cw-mid',
+    fillParent: true,
+    palette: 'terracotta',
+    background: 'cream',
+    speed: 1,
+    intensity: 1.1,
+  });
+
+  // Later…
+  field.setMode('vortex-brisk-ccw-fine');
+  field.setConfig({ palette: 'ocean', density: 1.2 });
+  // field.stop(); field.destroy();
+&lt;/script&gt;</code></pre>
+        <p>
+          Headless (Node tests, SSR-safe stepping without a real canvas):
+        </p>
+        <pre class="code-block"><code>const Dotfield = require('dotfield');
+
+const sim = Dotfield.createSimulation({
+  width: 400,
+  height: 300,
+  count: 48,
+  seed: 42,
+  mode: 'wave-calm-cw-mid',
+  speed: 1.2,
+});
+
+for (let i = 0; i &lt; 60; i++) sim.step(1 / 60);
+const positions = sim.getPositions();</code></pre>
+      </section>
+
+      <section id="api" class="doc-section">
+        <h2>API reference</h2>
+        <p>
+          The public surface is intentionally small. Everything below is stable for
+          application code. Underscore-prefixed properties (e.g. <code>_catalogLength</code>)
+          are internal.
+        </p>
+
+        <h3 id="api-create"><code>Dotfield.create(canvas, options?)</code></h3>
+        <p>
+          Creates a live animated field on a canvas element. Returns a field instance.
+          Throws if <code>canvas</code> is missing or not a canvas.
+        </p>
+        <table class="docs-table">
+          <thead>
+            <tr><th>Option</th><th>Type</th><th>Default</th><th>Description</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>mode</code></td><td>string</td><td><code>flow-calm-cw-mid</code></td><td>Catalog mode id</td></tr>
+            <tr><td><code>fillParent</code></td><td>boolean</td><td>contextual</td><td><code>true</code> sizes to window; <code>false</code> sizes to parent/canvas box</td></tr>
+            <tr><td><code>width</code> / <code>height</code></td><td>number</td><td>—</td><td>Fixed logical size when set</td></tr>
+            <tr><td><code>count</code></td><td>number</td><td>auto</td><td>Fixed particle count</td></tr>
+            <tr><td><code>maxParticles</code> / <code>minParticles</code></td><td>number</td><td>5200 / 1200</td><td>Auto-density clamps</td></tr>
+            <tr><td><code>density</code></td><td>number</td><td>1</td><td>Relative density when count is auto</td></tr>
+            <tr><td><code>autoStart</code></td><td>boolean</td><td><code>true</code></td><td>Begin RAF loop immediately</td></tr>
+            <tr><td><code>interactive</code></td><td>boolean</td><td><code>true</code></td><td>Master cursor on/off — set <code>false</code> to disable all pointer forces</td></tr>
+            <tr><td><code>mouseMode</code></td><td>string</td><td><code>'repel'</code></td><td><code>repel</code> · <code>attract</code> · <code>swirl</code> · <code>off</code></td></tr>
+            <tr><td><code>mouseForce</code> / <code>mouseRadius</code></td><td>number</td><td>mode-tuned</td><td>Strength &amp; pixel radius of cursor influence</td></tr>
+            <tr><td><code>autoMouse</code></td><td>boolean</td><td><code>true</code></td><td>Re-tune radius/force on mode change &amp; resize</td></tr>
+            <tr><td><code>mouseSmooth</code></td><td>number</td><td><code>0.12</code></td><td>Pointer follow ease (0–1; higher = snappier)</td></tr>
+            <tr><td><code>seed</code></td><td>number</td><td>random</td><td>Particle spawn seed</td></tr>
+            <tr><td><code>paused</code></td><td>boolean</td><td><code>false</code></td><td>Start paused (simulation still can draw)</td></tr>
+            <tr><td><code>palette</code> / <code>colors</code></td><td>see Config</td><td>mode default</td><td>Dot colors</td></tr>
+            <tr><td><code>background</code> / <code>bg</code></td><td>see Config</td><td>mode default</td><td>Trail clear color</td></tr>
+            <tr><td><code>speed</code>, <code>speedScale</code>, <code>intensity</code>, …</td><td>number</td><td>mode</td><td>Motion overrides (see Customization)</td></tr>
+          </tbody>
+        </table>
+
+        <h3 id="api-simulation"><code>Dotfield.createSimulation(options?)</code></h3>
+        <p>
+          Pure simulation without canvas I/O. Ideal for unit tests and deterministic
+          stepping. Shares the same motion math as <code>create</code>.
+        </p>
+        <pre class="code-block"><code>const sim = Dotfield.createSimulation({
+  width: 320,
+  height: 240,
+  count: 32,
+  seed: 1,
+  mode: 'spiral-rush-cw-vast',
+  palette: 'ember',
+});
+sim.step(1 / 60);
+sim.setMode('grid-calm-ccw-fine');
+sim.setConfig({ speed: 2 });
+const snap = sim.getSnapshot();</code></pre>
+
+        <h3 id="api-catalog"><code>listModes()</code> / <code>getMode(id)</code></h3>
+        <p><code>Dotfield.listModes()</code> returns an array of:</p>
+        <pre class="code-block"><code>{
+  id: string,           // stable, e.g. "orbit-brisk-ccw-mid"
+  label: string,        // human-readable
+  family: string,       // e.g. "orbit"
+  familyLabel: string,
+  description: string
+}</code></pre>
+        <p>
+          <code>Dotfield.getMode(id)</code> returns the same plus <code>params</code>
+          (motion parameters), or <code>null</code> if unknown.
+        </p>
+        <p>
+          Also available: <code>Dotfield.families</code>, <code>Dotfield.palettes</code>,
+          <code>Dotfield.backgrounds</code>, <code>Dotfield.version</code>.
+        </p>
+
+        <h3 id="api-instance">Instance methods</h3>
+        <table class="docs-table">
+          <thead>
+            <tr><th>Method</th><th>Description</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>setMode(id)</code></td><td>Switch catalog mode; keeps consumer overrides</td></tr>
+            <tr><td><code>getMode()</code></td><td>Current mode id string</td></tr>
+            <tr><td><code>getModeInfo()</code></td><td>Full mode metadata for current id</td></tr>
+            <tr><td><code>setConfig(opts)</code></td><td>Merge customization overrides (see below)</td></tr>
+            <tr><td><code>getConfig()</code></td><td>Mode, overrides, resolved palette/bg, count</td></tr>
+            <tr><td><code>listModes()</code></td><td>Same as <code>Dotfield.listModes()</code></td></tr>
+            <tr><td><code>pulse()</code></td><td>Radial burst impulse</td></tr>
+            <tr><td><code>getPositions()</code></td><td>Array of <code>{x,y,vx,vy}</code></td></tr>
+            <tr><td><code>getParticleCount()</code> / <code>getFps()</code></td><td>Diagnostics (canvas field)</td></tr>
+            <tr><td><code>retuneMouse()</code></td><td>Force recompute of mode-tuned radius/force for current size</td></tr>
+            <tr><td><code>getMouseSettings()</code></td><td><code>{ mouseRadius, mouseForce, mouseMode, interactive, autoMouse, mouseSmooth }</code></td></tr>
+            <tr><td><code>resize()</code></td><td>Recompute canvas size &amp; density</td></tr>
+            <tr><td><code>step(dt?)</code></td><td>Advance one tick (also on simulation)</td></tr>
+          </tbody>
+        </table>
+
+        <h3 id="api-setconfig"><code>setConfig(options)</code></h3>
+        <p>
+          Merges overrides onto the current mode. Overrides persist across subsequent
+          <code>setMode</code> calls until you change them again.
+        </p>
+        <pre class="code-block"><code>field.setConfig({
+  mode: 'bloom-steady-cw-mid', // optional: also switches mode
+  palette: 'ocean',            // or 'rainbow'
+  background: '#0c0c0e',
+  speedScale: 1.4,
+  intensity: 1.2,
+  density: 1.3,
+  // or count: 2000,
+  trail: false,                // disable stain / motion smear
+  interactive: true,           // false = fully disable cursor
+  mouseMode: 'swirl',
+  mouseForce: 2,
+  mouseRadius: 160,
+  mouseSmooth: 0.2,
+  autoMouse: false,            // lock manual force/radius
+});</code></pre>
+
+        <h3 id="api-lifecycle">Lifecycle</h3>
+        <table class="docs-table">
+          <thead>
+            <tr><th>Method</th><th>Description</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>start()</code></td><td>Start animation loop (no-op if already running)</td></tr>
+            <tr><td><code>stop()</code></td><td>Stop RAF / timeout loop</td></tr>
+            <tr><td><code>destroy()</code></td><td>Stop, unbind listeners, clear particles</td></tr>
+            <tr><td><code>pause()</code> / <code>resume()</code> / <code>togglePause()</code></td><td>Programmatic pause (no site UI button)</td></tr>
+            <tr><td><code>isRunning()</code> / <code>isPaused()</code></td><td>State flags</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="customization" class="doc-section">
+        <h2>Customization</h2>
+        <p>
+          Pass options at create time or via <code>setConfig</code>. Named palettes and
+          backgrounds ship with the library; you can also pass raw RGB or hex.
+        </p>
+
+        <h3>Colors</h3>
+        <ul>
+          <li><strong>Named palettes:</strong> <code>terracotta</code>, <code>ink</code>, <code>ocean</code>, <code>dusk</code>, <code>forest</code>, <code>ember</code>, <code>frost</code>, <code>gold</code>, <code>rose</code></li>
+          <li><strong>Rainbow:</strong> <code>palette: 'rainbow'</code> or <code>rainbow: true</code> — particles cycle through hues continuously (animated)</li>
+          <li><strong>Custom:</strong> <code>[{ r, g, b }, …]</code>, <code>['#c45c3e', …]</code>, or a single hex string</li>
+          <li><strong>Backgrounds:</strong> <code>cream</code>, <code>paper</code>, <code>night</code>, <code>slate</code>, <code>mist</code>, <code>sand</code>, <code>ink</code>, or hex / <code>{r,g,b}</code></li>
+        </ul>
+
+        <h3>Motion &amp; density</h3>
+        <table class="docs-table">
+          <thead>
+            <tr><th>Key</th><th>Effect</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>speed</code></td><td>Absolute speed multiplier for the mode</td></tr>
+            <tr><td><code>speedScale</code></td><td>Multiplies existing speed</td></tr>
+            <tr><td><code>intensity</code></td><td>Scales noise amplitude and attractor pull</td></tr>
+            <tr><td><code>scale</code></td><td>Noise spatial scale</td></tr>
+            <tr><td><code>noiseAmp</code></td><td>Flow noise strength</td></tr>
+            <tr><td><code>spin</code></td><td><code>1</code> / <code>-1</code> direction bias</td></tr>
+            <tr><td><code>pull</code> / <code>morphBias</code></td><td>Attractor strength</td></tr>
+            <tr><td><code>rings</code> / <code>clusters</code></td><td>Orbit / constellation structure</td></tr>
+            <tr><td><code>waveFreq</code> / <code>waveAmp</code></td><td>Wave / ribbon parameters</td></tr>
+            <tr><td><code>count</code></td><td>Exact particle count (respawns)</td></tr>
+            <tr><td><code>density</code></td><td>Relative density when count is automatic</td></tr>
+            <tr><td><code>quality</code></td><td><code>'high'</code> | <code>'medium'</code> | <code>'low'</code> — DPR, glow, particle defaults</td></tr>
+            <tr><td><code>glow</code></td><td>Soft radial glow highlights (costly on large fields)</td></tr>
+            <tr><td><code>interactive</code></td><td>Enable pointer / mouse forces on the canvas</td></tr>
+          </tbody>
+        </table>
+
+        <h3 id="cursor">Cursor interaction</h3>
+        <p>
+          Cursor behaviour is fully optional. When enabled, the field reacts to the pointer
+          using canvas-local coordinates (embedded previews and full-bleed heroes).
+          You can turn it off entirely, pick a force mode, lock or auto-tune radius/force,
+          and control how snappy the follow feels.
+        </p>
+
+        <h4 id="cursor-disable">Disable cursor interaction</h4>
+        <p>Three equivalent ways to turn cursor forces off:</p>
+        <ol>
+          <li><strong>Master switch:</strong> <code>interactive: false</code> — no pointer tracking, no forces. Prefer this for pure decorative fields or reduced-motion-friendly pages.</li>
+          <li><strong>Mode off:</strong> <code>mouseMode: 'off'</code> (alias <code>'none'</code>) — keeps listeners but applies zero force.</li>
+          <li><strong>Zero force:</strong> <code>mouseForce: 0</code> — same effect as mode off for force application.</li>
+        </ol>
+        <pre class="code-block"><code>// Decorative only — no cursor reaction
+Dotfield.create(canvas, {
+  mode: 'serene-float-whisper-cw-soft',
+  fillParent: true,
+  interactive: false,
+});
+
+// Runtime toggle (e.g. accessibility control)
+field.setConfig({ interactive: false });
+field.setConfig({ interactive: true, mouseMode: 'repel' });</code></pre>
+
+        <h4 id="cursor-options">All cursor options</h4>
+        <table class="docs-table">
+          <thead>
+            <tr><th>Key</th><th>Default</th><th>Effect</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>interactive</code></td><td><code>true</code></td><td>Master on/off. <code>false</code> disables pointer forces completely</td></tr>
+            <tr><td><code>mouseMode</code></td><td><code>'repel'</code></td><td><code>repel</code> · <code>attract</code> · <code>swirl</code> (alias <code>vortex</code>) · <code>off</code> / <code>none</code></td></tr>
+            <tr><td><code>mouseForce</code></td><td>mode-tuned</td><td>Strength of the cursor influence. <code>0</code> = no push</td></tr>
+            <tr><td><code>mouseRadius</code></td><td>mode-tuned</td><td>Pixel radius of influence — auto-scales to mode + canvas size</td></tr>
+            <tr><td><code>autoMouse</code></td><td><code>true</code></td><td>When true, radius/force re-tune on <code>setMode</code> / resize</td></tr>
+            <tr><td><code>mouseSmooth</code></td><td><code>0.12</code></td><td>Pointer follow ease (0–1). Low = soft lag, high = snappy, <code>1</code> = instant</td></tr>
+          </tbody>
+        </table>
+        <p>
+          Radius and force are derived from the mode’s engine, speed, calm flag, and canvas
+          size (e.g. open <code>flow</code>/<code>drift</code> fields get a wider hand; dense
+          <code>grid</code> modes get a tighter one; calm modes get a gentler, smaller radius).
+          Setting <code>mouseRadius</code> or <code>mouseForce</code> via <code>setConfig</code>
+          locks auto-tune until the next <code>setMode</code> or
+          <code>setConfig({ autoMouse: true })</code>.
+        </p>
+        <pre class="code-block"><code>// Interactive swirl with manual lock
+Dotfield.create(canvas, {
+  mode: 'orbit-steady-cw-mid',
+  fillParent: true,
+  interactive: true,
+  mouseMode: 'swirl',
+  mouseForce: 2.2,
+  mouseRadius: 180,
+  mouseSmooth: 0.2,
+  autoMouse: false, // keep fixed force/radius across modes
+});
+
+// Auto-fit radius to each mode
+field.setConfig({ autoMouse: true });
+field.setMode('serene-float-whisper-cw-soft'); // retunes radius
+field.retuneMouse(); // force recompute for current size
+field.getMouseSettings();
+// → { mouseRadius, mouseForce, mouseMode, interactive, autoMouse, mouseSmooth }
+
+// Soft attract with snappy pointer
+field.setConfig({
+  mouseMode: 'attract',
+  mouseSmooth: 0.45,
+  mouseRadius: 220,
+  mouseForce: 1.2,
+});</code></pre>
+        <p>
+          The gallery preview’s <strong>Show controls</strong> panel exposes the same options:
+          master On/Off, mode (Off · Repel · Attract · Swirl), Force, Radius, Smooth, and
+          <strong>Auto cursor</strong>. The embed snippet updates when you change them.
+        </p>
+
+        <h3 id="trail-rainbow">Trail (stain) &amp; rainbow</h3>
+        <p>
+          By default the renderer clears each frame with a translucent background fill.
+          That creates the soft <strong>trail / stain</strong> left when particles cross an area.
+          Set <code>trail: false</code> for a clean solid wipe every frame (no smear).
+        </p>
+        <table class="docs-table">
+          <thead>
+            <tr><th>Key</th><th>Default</th><th>Effect</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>trail</code></td><td><code>true</code></td><td>Soft motion smear. <code>false</code> = solid clear, no stain</td></tr>
+            <tr><td><code>rainbow</code></td><td><code>false</code></td><td>Animated multi-hue particles (same as <code>palette: 'rainbow'</code>)</td></tr>
+            <tr><td><code>palette: 'rainbow'</code></td><td>—</td><td>Alias for animated rainbow colouring</td></tr>
+          </tbody>
+        </table>
+        <pre class="code-block"><code>// Clean field, multicolour particles
+Dotfield.create(canvas, {
+  mode: 'flow-calm-cw-mid',
+  fillParent: true,
+  trail: false,      // no stain / smear
+  rainbow: true,     // or palette: 'rainbow'
+  interactive: true,
+  mouseMode: 'repel',
+});
+
+field.setConfig({ trail: true });   // re-enable soft paths
+field.setConfig({ rainbow: false, palette: 'ocean' });</code></pre>
+
+        <pre class="code-block"><code>// Dark product page accent
+Dotfield.create(canvas, {
+  mode: 'constellation-calm-cw-mid',
+  fillParent: true,
+  palette: [
+    { r: 120, g: 200, b: 255 },
+    { r: 80, g: 140, b: 220 },
+  ],
+  background: 'night',
+  intensity: 1.35,
+  count: 3200,
+  trail: true,
+});</code></pre>
+      </section>
+
+      <section id="modes" class="doc-section">
+        <h2>Modes &amp; catalog</h2>
+        <p>
+          Modes are parametric combinations of <strong>families</strong> (motion engines),
+          <strong>speed</strong>, <strong>spin</strong>, and <strong>noise scale</strong>,
+          plus tint variants and a large <strong>serene / calm</strong> series tuned to be
+          smooth and easy on the eyes. Each mode has a stable string id safe to hard-code in apps.
+        </p>
+        <pre class="code-block"><code>const modes = Dotfield.listModes();
+console.log(modes.length); // thousands
+
+// Calm-only catalog (whisper / gentle / still / calm + serene-*)
+const calm = Dotfield.listCalmModes();
+// or: modes.filter((m) => m.calm || m.serene || Dotfield.isCalmMode(m.id));
+
+// Filter by family
+const orbits = modes.filter((m) => m.family === 'orbit');
+
+// Resolve metadata
+const info = Dotfield.getMode('serene-float-whisper-cw-soft');
+// info.params.engine, info.params.speed, info.calm, info.serene …</code></pre>
+
+        <h3>Calm &amp; serene modes</h3>
+        <p>
+          Speeds <code>whisper</code>, <code>gentle</code>, <code>still</code>, and <code>calm</code>
+          are marked calm. Dedicated families (float, glide, hush, murmur, lull, breath, meadow,
+          glass, zen, cloud, velvet, silk, mistflow, lagoon, emberglow, moonring, softgrid,
+          driftwood) and every <code>serene-*</code> id use lower noise, softer pull, higher
+          damping, and slower field evolution so motion stays smooth.
+        </p>
+        <pre class="code-block"><code>// Easy-on-the-eyes hero
+Dotfield.create(canvas, {
+  mode: 'serene-zen-gentle-cw-ease',
+  fillParent: true,
+  trail: false,
+  interactive: true,
+});</code></pre>
+
+        <h3>Families (examples)</h3>
+        <p>
+          Core engines include flow, orbit, constellation, wave, spiral, vortex, grid,
+          ribbon, bloom, rain, figure8, helix, scatter, pulse, drift, magnet, weave,
+          halo, cascade, swarm. Extended family names (aurora, tide, lattice, comet,
+          fog, mill, braid, echo, nexus, gyre, petal, cord, lance, stream, infinity,
+          poles) map onto those engines with distinct parameter biases so motion still differs.
+        </p>
+
+        <h3>Id shape</h3>
+        <pre class="code-block"><code>// family-speed-spin-scale
+'flow-calm-cw-mid'
+'orbit-brisk-ccw-fine'
+'vortex-rush-cw-vast'
+
+// tint variants
+'orbit-tint-ocean-tight'
+
+// short legacy aliases (family-speed-spin) also resolve
+'flow-calm-cw'</code></pre>
+        <p>
+          Browse every mode on the <a href="../#gallery">live gallery</a> — the large
+          preview updates without changing the page backdrop.
+        </p>
+      </section>
+
+      <section id="examples" class="doc-section">
+        <h2>Examples</h2>
+
+        <h3>Hero background</h3>
+        <pre class="code-block"><code>const field = Dotfield.create(document.getElementById('hero-canvas'), {
+  mode: 'flow-calm-cw-mid',
+  fillParent: true,
+  interactive: true,
+  maxParticles: 4000,
+  palette: 'terracotta',
+  background: 'cream',
+});</code></pre>
+
+        <h3>Mode picker in your UI</h3>
+        <pre class="code-block"><code>const select = document.getElementById('mode-select');
+Dotfield.listModes()
+  .filter((m) => m.family === 'orbit')
+  .slice(0, 40)
+  .forEach((m) => {
+    const opt = document.createElement('option');
+    opt.value = m.id;
+    opt.textContent = m.label;
+    select.appendChild(opt);
+  });
+
+select.addEventListener('change', () => {
+  field.setMode(select.value);
+});</code></pre>
+
+        <h3>Package consumer (Node)</h3>
+        <p>
+          See <code>examples/package-consumer/</code> in the repo — it installs via
+          <code>file:</code> and <code>require('dotfield')</code>.
+        </p>
+        <pre class="code-block"><code>const Dotfield = require('dotfield');
+const sim = Dotfield.createSimulation({
+  seed: 42,
+  count: 24,
+  mode: 'orbit-steady-cw-mid',
+  palette: 'ocean',
+  background: 'night',
+});
+for (let i = 0; i &lt; 20; i++) sim.step(1 / 60);
+console.log(sim.getPositions().length);</code></pre>
+
+        <h3>Minimal HTML</h3>
+        <p>Repo path: <code>examples/minimal.html</code>.</p>
+      </section>
+
+      <section id="gallery-site" class="doc-section">
+        <h2>Gallery site</h2>
+        <p>This repository includes a marketing + gallery page:</p>
+        <pre class="code-block"><code>npm start
+# open http://localhost:8080</code></pre>
+        <ul>
+          <li><strong>Backdrop</strong> — full-page field, fixed mode, not changed by gallery picks</li>
+          <li><strong>Preview stage</strong> — large live canvas; mode select only updates this field</li>
+          <li><strong>Preview controls</strong> — dot/bg colour, speed, intensity, density, cursor mode (repel/attract/swirl), force, radius, trail/stain, rainbow, glow, flip spin</li>
+          <li><strong>Install section</strong> — npm / require snippets mirror the current preview settings</li>
+          <li><strong>Docs</strong> — this page at <code>/docs/</code></li>
+        </ul>
+      </section>
+
+      <section id="testing" class="doc-section">
+        <h2>Testing</h2>
+        <pre class="code-block"><code>npm test                 # catalog size, motion, customization
+npm run test:gallery     # dual-field isolation + markup
+npm run test:consumer    # file: package require path
+npm run test:browser     # Playwright probe (optional)</code></pre>
+        <p>
+          Prefer <code>createSimulation</code> in unit tests: fixed seed, equal step
+          counts, compare positions. Assert customization by comparing snapshots after
+          different <code>speed</code> / <code>palette</code> / <code>count</code> options.
+        </p>
+      </section>
+
+      <section id="faq" class="doc-section">
+        <h2>FAQ</h2>
+        <h3>Does Dotfield need a build step?</h3>
+        <p>No. The shipped file is plain IIFE + CommonJS-friendly. Bundlers optional.</p>
+        <h3>Can I use it with React / Vue?</h3>
+        <p>
+          Yes — create the field in <code>useEffect</code> / <code>onMounted</code> with a
+          canvas ref, and call <code>destroy()</code> on unmount. No official wrappers ship
+          in this package.
+        </p>
+        <h3>How do I keep performance high?</h3>
+        <p>
+          Cap <code>maxParticles</code> or set a fixed <code>count</code>. Preview surfaces
+          can use fewer particles than full-bleed heroes. Prefer one field per page when possible.
+        </p>
+        <h3>Is pause available?</h3>
+        <p>
+          Yes programmatically via <code>field.pause()</code> / <code>resume()</code> /
+          <code>togglePause()</code>. The demo site does not expose a Pause button.
+        </p>
+        <h3>How do I disable cursor / mouse interaction?</h3>
+        <p>
+          Pass <code>interactive: false</code> at create time, or call
+          <code>field.setConfig({ interactive: false })</code> at runtime.
+          Alternatives: <code>mouseMode: 'off'</code> or <code>mouseForce: 0</code>.
+          See <a href="#cursor-disable">Cursor interaction → Disable</a>.
+        </p>
+        <h3>Where is the source of truth for modes?</h3>
+        <p>
+          Generated inside <code>lib/dotfield.js</code> at load time. Always query
+          <code>listModes()</code> rather than hard-coding the count.
+        </p>
+      </section>
+
+      <footer class="docs-footer">
+        <p>
+          <a href="../">← Back to Dotfield home</a>
+          ·
+          <a href="../#gallery">Gallery</a>
+          ·
+          <a href="https://github.com/trinlol/dotfield" rel="noopener">GitHub</a>
+        </p>
+        <p class="muted">MIT licensed · Inspired by modern AI brand film aesthetics — not affiliated with Anthropic.</p>
+      </footer>
+    </main>
+  </div>
+
+  <script src="../theme.js"></script>
+  <script src="../copy-code.js"></script>
+  <script src="../lib/dotfield.js"></script>
+  <script>
+    (function () {
+      if (typeof Dotfield !== "undefined" && Dotfield.version) {
+        var el = document.getElementById("doc-version");
+        if (el) el.textContent = Dotfield.version;
+      }
+      // Highlight TOC on scroll (lightweight)
+      var links = document.querySelectorAll(".docs-sidebar a[href^='#']");
+      var sections = [];
+      links.forEach(function (a) {
+        var id = a.getAttribute("href").slice(1);
+        var sec = document.getElementById(id);
+        if (sec) sections.push({ id: id, el: sec, link: a });
+      });
+      function onScroll() {
+        var y = window.scrollY + 100;
+        var current = sections[0];
+        for (var i = 0; i < sections.length; i++) {
+          if (sections[i].el.offsetTop <= y) current = sections[i];
+        }
+        links.forEach(function (l) { l.classList.remove("active"); });
+        if (current) current.link.classList.add("active");
+      }
+      window.addEventListener("scroll", onScroll, { passive: true });
+      onScroll();
+    })();
+  </script>
+</body>
+</html>

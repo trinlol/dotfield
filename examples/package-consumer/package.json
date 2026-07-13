@@ -1,0 +1,9 @@
+{
+  "name": "dotfield-package-consumer",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Fresh consumer that depends on dotfield via file: protocol",
+  "dependencies": {
+    "dotfield": "file:../.."
+  }
+}

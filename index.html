@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dotfield — Mode Gallery &amp; Library</title>
+  <meta name="description" content="Installable stipple particle library with thousands of modes. Live preview without changing the page backdrop." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <script>
+    /* Default: system preference until user picks light/dark */
+    (function () {
+      try {
+        var pref = localStorage.getItem("dotfield-theme");
+        var t =
+          pref === "light" || pref === "dark"
+            ? pref
+            : matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+        document.documentElement.setAttribute("data-theme", t);
+        document.documentElement.style.colorScheme = t;
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+  <div id="file-protocol-banner" class="file-banner" hidden>
+    Open this gallery via a local server for best results:
+    <code>npm start</code> or <code>python -m http.server 8080</code>
+  </div>
+
+  <!-- Fixed backdrop — gallery never changes this field's mode -->
+  <canvas id="backdrop" aria-hidden="true" data-role="backdrop"></canvas>
+  <div class="vignette" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="nav">
+    <a class="logo" href="#">
+      <span class="logo-mark"></span>
+      Dotfield
+    </a>
+    <nav>
+      <a href="#gallery">Gallery</a>
+      <a href="#embed">Install</a>
+      <a href="docs/">Docs</a>
+      <a href="#about">About</a>
+    </nav>
+    <div class="nav-actions">
+      <a
+        class="github-link"
+        href="https://github.com/trinlol/dotfield"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="GitHub"
+        title="GitHub"
+      >
+        <svg class="github-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+          <path
+            fill="currentColor"
+            d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.17 6.839 9.49.5.09.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0 1 12 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.167 22 16.418 22 12c0-5.523-4.477-10-10-10z"
+          />
+        </svg>
+      </a>
+      <button type="button" class="btn btn-secondary theme-toggle" data-theme-toggle aria-label="Switch theme">
+        <span class="theme-icon" aria-hidden="true"></span>
+        <span data-theme-label>Dark</span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <p class="eyebrow">npm package · <span id="mode-count">1000+</span> modes · highly customizable</p>
+      <h1>
+        <span class="hero-title-lead" id="hero-title-lead">Dotfield,</span><br />
+        <em class="hero-rotate" aria-live="polite">
+          <span class="hero-rotate-word" id="hero-rotate-word">pure motion</span>
+        </em>
+      </h1>
+      <p class="lede">
+        Install Dotfield as a package, pick from thousands of named motion modes,
+        and tune palette, density, speed, and more. The page backdrop cycles modes
+        on its own — previews live in the gallery below.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#gallery">Browse modes</a>
+        <a class="btn btn-secondary" href="#embed">Install package</a>
+        <a class="btn btn-secondary" href="docs/">Read the docs</a>
+      </div>
+
+      <div class="mode-bars">
+        <div class="active-mode-bar current-bar" id="backdrop-mode-bar" data-backdrop-mode="" title="Hover to hold this mode">
+          <span class="active-label">Current</span>
+          <strong id="backdrop-mode-label">—</strong>
+          <code id="backdrop-mode-id">—</code>
+          <span class="current-status" id="backdrop-mode-status" aria-live="polite"></span>
+        </div>
+      </div>
+
+      <div class="scroll-hint">
+        <span></span>
+        Scroll to gallery
+      </div>
+    </section>
+
+    <section id="gallery" class="panel gallery-panel">
+      <div class="panel-inner gallery-inner">
+        <div class="gallery-header">
+          <div>
+            <p class="eyebrow">Gallery</p>
+            <h2>Preview a mode</h2>
+            <p class="gallery-sub">
+              Full-width stage for the selected mode. The page backdrop stays locked —
+              only this stage switches.
+            </p>
+          </div>
+        </div>
+
+        <!-- Cinematic stage -->
+        <div class="preview-stage" id="preview-card" aria-label="Mode preview">
+          <div class="preview-canvas-wrap">
+            <canvas id="preview" data-role="preview"></canvas>
+            <div class="preview-overlay">
+              <div class="preview-overlay-main">
+                <span class="preview-eyebrow">Live stage · move mouse to interact</span>
+                <p class="preview-card-label" id="preview-card-label">—</p>
+                <p class="preview-card-desc" id="preview-card-desc"></p>
+              </div>
+              <div class="preview-overlay-actions">
+                <code id="preview-card-mode-id" class="preview-mode-code">—</code>
+                <button type="button" class="btn btn-secondary btn-sm" id="copy-preview-mode-btn">Copy id</button>
+                <button type="button" class="btn btn-secondary btn-sm" id="preview-random-btn" title="Random mode">Random</button>
+                <button type="button" class="btn btn-secondary btn-sm" id="pulse-btn">Pulse</button>
+                <button type="button" class="btn btn-secondary btn-sm preview-controls-toggle" id="preview-controls-toggle" aria-expanded="false" aria-controls="preview-controls">
+                  <span id="preview-controls-toggle-label">Show controls</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Preview customisation panel (collapsed by default) -->
+          <div class="preview-controls is-collapsed" id="preview-controls" hidden>
+            <div class="preview-controls-row">
+              <div class="preview-control-inline">
+                <span class="preview-control-label">Dots</span>
+                <div class="preview-color-picker" id="preview-color-picker" role="group" aria-label="Preview dot color">
+                  <div class="preview-swatches" id="preview-swatches"></div>
+                  <label class="preview-custom-color" title="Custom color">
+                    <span class="sr-only">Custom dot color</span>
+                    <input type="color" id="preview-color-input" value="#c45c3e" />
+                  </label>
+                </div>
+              </div>
+              <div class="preview-control-inline">
+                <span class="preview-control-label">BG</span>
+                <div class="preview-bg-swatches" id="preview-bg-swatches" role="group" aria-label="Preview background"></div>
+                <label class="preview-custom-color preview-bg-custom" title="Custom background">
+                  <span class="sr-only">Custom background color</span>
+                  <input type="color" id="preview-bg-input" value="#f4efe6" />
+                </label>
+              </div>
+              <div class="preview-control-inline" id="preview-cursor-block">
+                <span class="preview-control-label">Cursor</span>
+                <label class="preview-toggle preview-toggle-inline" title="Master switch — disables all pointer forces">
+                  <input type="checkbox" id="preview-interactive" checked />
+                  <span>On</span>
+                </label>
+                <div class="preview-seg" id="preview-mouse-mode" role="group" aria-label="Cursor effect">
+                  <button type="button" class="preview-seg-btn" data-mouse-mode="off" title="No force (mode off)">Off</button>
+                  <button type="button" class="preview-seg-btn active" data-mouse-mode="repel">Repel</button>
+                  <button type="button" class="preview-seg-btn" data-mouse-mode="attract">Attract</button>
+                  <button type="button" class="preview-seg-btn" data-mouse-mode="swirl">Swirl</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="preview-controls-row preview-controls-sliders">
+              <label class="preview-slider">
+                <span>Speed <em id="preview-speed-val">1.0</em></span>
+                <input type="range" id="preview-speed" min="0.2" max="2.5" step="0.05" value="1" />
+              </label>
+              <label class="preview-slider">
+                <span>Intensity <em id="preview-intensity-val">1.0</em></span>
+                <input type="range" id="preview-intensity" min="0.3" max="2.5" step="0.05" value="1" />
+              </label>
+              <label class="preview-slider">
+                <span>Density <em id="preview-density-val">1100</em></span>
+                <input type="range" id="preview-density" min="300" max="2200" step="50" value="1100" />
+              </label>
+              <label class="preview-slider preview-slider-cursor" title="Cursor force strength (0 = no push)">
+                <span>Force <em id="preview-mouse-force-val">1.8</em></span>
+                <input type="range" id="preview-mouse-force" min="0" max="4" step="0.1" value="1.8" />
+              </label>
+              <label class="preview-slider preview-slider-cursor" title="Pixel radius of cursor influence">
+                <span>Radius <em id="preview-mouse-radius-val">160</em></span>
+                <input type="range" id="preview-mouse-radius" min="40" max="320" step="10" value="160" />
+              </label>
+              <label class="preview-slider preview-slider-cursor" title="Pointer smoothing: low = laggy, high = snappy">
+                <span>Smooth <em id="preview-mouse-smooth-val">0.12</em></span>
+                <input type="range" id="preview-mouse-smooth" min="0.02" max="1" step="0.02" value="0.12" />
+              </label>
+            </div>
+
+            <div class="preview-controls-row preview-controls-toggles">
+              <label class="preview-toggle" title="Soft motion smear left by moving dots">
+                <input type="checkbox" id="preview-trail" />
+                <span>Trail / stain</span>
+              </label>
+              <label class="preview-toggle" title="Each particle a different hue">
+                <input type="checkbox" id="preview-rainbow" />
+                <span>Rainbow</span>
+              </label>
+              <label class="preview-toggle">
+                <input type="checkbox" id="preview-glow" />
+                <span>Glow</span>
+              </label>
+              <label class="preview-toggle">
+                <input type="checkbox" id="preview-spin-flip" />
+                <span>Flip spin</span>
+              </label>
+              <label class="preview-toggle preview-toggle-cursor" title="Re-tune radius &amp; force when the mode or size changes">
+                <input type="checkbox" id="preview-auto-mouse" checked />
+                <span>Auto cursor</span>
+              </label>
+              <button type="button" class="btn btn-secondary btn-sm" id="preview-reset-btn">Reset</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Selector dock -->
+        <div class="selector-dock">
+          <div class="selector-toolbar">
+            <div class="family-chips" id="family-chips" role="tablist" aria-label="Mode families"></div>
+            <div class="selector-search-row">
+              <label class="sr-only" for="mode-search">Search modes</label>
+              <input type="search" id="mode-search" placeholder="Search by name, id, or family…" autocomplete="off" />
+              <select id="family-filter" class="sr-only" aria-hidden="true" tabindex="-1">
+                <option value="">All families</option>
+              </select>
+              <span class="gallery-meta"><span id="visible-count">0</span> shown</span>
+            </div>
+          </div>
+          <div id="mode-grid" class="mode-list" role="listbox" aria-label="Mode catalog"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="embed" class="panel">
+      <div class="panel-inner">
+        <p class="eyebrow">Install as a dependency</p>
+        <h2>npm / file: package</h2>
+        <p>
+          Dotfield is a real package entry (<code>main</code> / <code>exports</code>).
+          Install it into your project — not a one-off file download:
+        </p>
+        <div class="snippet-wrap">
+          <pre class="snippet"><code>npm install dotfield
+# or from this repo:
+npm install file:./path/to/dot-art-site</code></pre>
+        </div>
+        <div class="snippet-wrap">
+          <pre id="embed-snippet" class="snippet"><code>const Dotfield = require('dotfield');
+// or: import Dotfield from 'dotfield';
+
+const field = Dotfield.create(document.getElementById('dots'), {
+  mode: 'flow-calm-cw-mid',
+  fillParent: true,
+  palette: 'terracotta',
+  speed: 1,
+  intensity: 1,
+  count: 2400,
+  background: 'cream',
+});
+// field.setMode('orbit-brisk-ccw-fine');
+// field.setConfig({ palette: 'ocean', speedScale: 1.4, density: 1.2 });
+// field.listModes(); // → 1000+ { id, label, family }</code></pre>
+        </div>
+        <ul class="feature-grid">
+          <li>
+            <strong>require('dotfield')</strong>
+            <span>Package entry via main/exports — works from a fresh consumer install</span>
+          </li>
+          <li>
+            <strong>setMode / setConfig</strong>
+            <span>Switch catalog modes; override palette, bg, speed, density, count…</span>
+          </li>
+          <li>
+            <strong>listModes()</strong>
+            <span>Full catalog: stable ids, labels, families</span>
+          </li>
+          <li>
+            <strong>createSimulation</strong>
+            <span>Headless stepping for tests and servers — same motion math</span>
+          </li>
+        </ul>
+        <p class="muted-note">
+          See <a href="examples/package-consumer/">examples/package-consumer</a> and the README.
+        </p>
+      </div>
+    </section>
+
+    <section id="about" class="panel about">
+      <div class="panel-inner">
+        <p class="eyebrow">Craft</p>
+        <h2>Why dots?</h2>
+        <p>
+          Stipple art sits between illustration and code — density without hard edges.
+          Dotfield packages that language as an installable library you can customize deeply.
+        </p>
+        <div class="stats">
+          <div>
+            <strong id="stat-particles">0</strong>
+            <span>backdrop particles</span>
+          </div>
+          <div>
+            <strong id="stat-fps">—</strong>
+            <span>backdrop fps</span>
+          </div>
+          <div>
+            <strong id="stat-modes">—</strong>
+            <span>catalog modes</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Dotfield v<span id="lib-version">—</span> · zero runtime deps · package install</p>
+    <p class="muted">Inspired by Anthropic-style pointillism — not affiliated.</p>
+  </footer>
+
+  <div id="toast" class="toast" hidden role="status"></div>
+
+  <script src="theme.js?v=2"></script>
+  <script src="copy-code.js?v=2"></script>
+  <script src="lib/dotfield.js?v=2"></script>
+  <script src="main.js?v=2"></script>
+</body>
+</html>

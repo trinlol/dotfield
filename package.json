@@ -1,0 +1,49 @@
+{
+  "name": "dotfield",
+  "version": "1.1.0",
+  "description": "Living stipple / pointillism particle field — 3000+ modes, highly customizable, zero runtime dependencies",
+  "main": "lib/dotfield.js",
+  "exports": {
+    ".": {
+      "require": "./lib/dotfield.js",
+      "import": "./lib/dotfield.js",
+      "default": "./lib/dotfield.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib/dotfield.js",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node tests/library.test.js",
+    "test:gallery": "node tests/gallery-behavior.test.js",
+    "test:ui": "node tests/ui-docs-structure.test.js",
+    "test:consumer": "node tests/package-consumer.test.js",
+    "test:browser": "node tests/browser-probe.mjs",
+    "test:all": "node tests/library.test.js && node tests/gallery-behavior.test.js && node tests/ui-docs-structure.test.js && node tests/package-consumer.test.js",
+    "start": "python -m http.server 8080",
+    "prepublishOnly": "npm test"
+  },
+  "keywords": [
+    "particles",
+    "canvas",
+    "stipple",
+    "animation",
+    "dotfield",
+    "pointillism",
+    "generative"
+  ],
+  "author": "trinlol",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/trinlol/dotfield.git"
+  },
+  "homepage": "https://trinlol.github.io/dotfield/",
+  "bugs": {
+    "url": "https://github.com/trinlol/dotfield/issues"
+  },
+  "sideEffects": false
+}
