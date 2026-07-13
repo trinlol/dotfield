@@ -1,6 +1,6 @@
 {
   "name": "dotfield",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Living stipple / pointillism particle field — 3000+ modes, highly customizable, zero runtime dependencies",
   "main": "lib/dotfield.js",
   "types": "index.d.ts",
