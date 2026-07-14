@@ -93,6 +93,7 @@ test("backdrop rotation is limited to the four requested modes", function () {
     assert.ok(main.indexOf('"' + id + '"') !== -1, "missing backdrop mode: " + id);
   });
   assert.ok(/wrap:\s*true/.test(main), "backdrop should enable edge wrapping");
+  assert.ok(/interactive:\s*false/.test(main), "backdrop should not push particles toward the viewport edge");
   assert.ok(main.indexOf("buildBackdropPool") !== -1, "backdrop pool remains randomized");
 });
 

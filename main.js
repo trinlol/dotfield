@@ -211,14 +211,12 @@
     areaDivisor: 480,
     wrap: true,
     glow: false,
-    interactive: true,
+    interactive: false,
     trail: false,
     seed: (Date.now() ^ (randInt(1e9) << 0)) >>> 0,
     background: themeCfg.background,
     palette: themeCfg.palette,
-    mouseMode: "repel",
-    mouseForce: 1.6,
-    mouseRadius: 180,
+    mouseMode: "off",
   });
 
   // Preview stage — medium quality, cursor interaction, paused when off-screen
