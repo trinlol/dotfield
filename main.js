@@ -210,6 +210,7 @@
     minParticles: 900,
     areaDivisor: 480,
     wrap: true,
+    wrapInset: 12,
     glow: false,
     interactive: false,
     trail: false,

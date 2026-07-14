@@ -176,6 +176,10 @@
     if (options.mouseSmooth != null) out.mouseSmooth = Number(options.mouseSmooth);
     if (options.trail != null) out.trail = !!options.trail;
     if (options.wrap != null) out.wrap = !!options.wrap;
+    if (options.wrapInset != null) {
+      var wrapInset = Number(options.wrapInset);
+      out.wrapInset = isFinite(wrapInset) ? Math.max(0, wrapInset) : 0;
+    }
     if (options.rainbow != null) {
       out.rainbow = !!options.rainbow;
       if (out.rainbow) {

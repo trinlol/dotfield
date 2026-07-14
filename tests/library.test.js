@@ -192,6 +192,27 @@ test("wrap option is retained for looping particle fields", function () {
   });
 });
 
+test("wrap inset keeps particles out of the visible seam lane", function () {
+  var inset = 12;
+  var sim = Dotfield.createSimulation({
+    width: 120,
+    height: 80,
+    count: 64,
+    seed: 8,
+    mode: "float-calm-cw-mid",
+    wrap: true,
+    wrapInset: inset,
+    interactive: false,
+  });
+  for (var step = 0; step < 240; step++) {
+    sim.step(1 / 60);
+    sim.getPositions().forEach(function (p) {
+      assert.ok(p.x >= inset && p.x <= 120 - inset, "x entered the seam lane: " + p.x);
+      assert.ok(p.y >= inset && p.y <= 80 - inset, "y entered the seam lane: " + p.y);
+    });
+  }
+});
+
 test("deterministic same seed", function () {
   var id = Dotfield.listModes()[20].id;
   function once() {

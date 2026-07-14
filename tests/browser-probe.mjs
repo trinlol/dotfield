@@ -126,6 +126,49 @@ async function main() {
     const backdropBefore = await page.evaluate(() => window.__dotfieldGallery.getBackdropMode());
     if (backdropBefore !== fixedBackdrop) throw new Error("backdrop not fixed at start");
 
+    const backdropSeam = await page.evaluate(() => {
+      const field = window.__dotfieldGallery.backdrop;
+      const canvas = document.getElementById("backdrop");
+      const positions = field.getPositions();
+      const inset = 12;
+      const logicalWidth = window.innerWidth;
+      const logicalHeight = window.innerHeight;
+      const particlesInSeam = positions.filter((p) =>
+        p.x < inset || p.x > logicalWidth - inset ||
+        p.y < inset || p.y > logicalHeight - inset
+      ).length;
+
+      const ctx = canvas.getContext("2d");
+      const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+      const dpr = canvas.width / logicalWidth;
+      const clearBand = Math.max(1, Math.floor(7 * dpr));
+      const bg = [pixels[0], pixels[1], pixels[2]];
+      let changedEdgePixels = 0;
+      function changed(x, y) {
+        const offset = (y * canvas.width + x) * 4;
+        return Math.abs(pixels[offset] - bg[0]) > 2 ||
+          Math.abs(pixels[offset + 1] - bg[1]) > 2 ||
+          Math.abs(pixels[offset + 2] - bg[2]) > 2;
+      }
+      for (let y = 0; y < canvas.height; y++) {
+        for (let x = 0; x < clearBand; x++) {
+          if (changed(x, y)) changedEdgePixels++;
+          if (changed(canvas.width - 1 - x, y)) changedEdgePixels++;
+        }
+      }
+      for (let x = clearBand; x < canvas.width - clearBand; x++) {
+        for (let y = 0; y < clearBand; y++) {
+          if (changed(x, y)) changedEdgePixels++;
+          if (changed(x, canvas.height - 1 - y)) changedEdgePixels++;
+        }
+      }
+      return { particlesInSeam, changedEdgePixels, clearBand };
+    });
+    log("backdrop seam=" + JSON.stringify(backdropSeam));
+    if (backdropSeam.particlesInSeam !== 0 || backdropSeam.changedEdgePixels !== 0) {
+      throw new Error("backdrop particles or paint entered the cleared seam lane");
+    }
+
     const targetMode = await page.evaluate(() => {
       const modes = window.Dotfield.listModes();
       const cur = window.__dotfieldGallery.getPreviewMode();

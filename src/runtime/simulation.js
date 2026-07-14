@@ -21,7 +21,7 @@
       "morphBias", "rings", "clusters", "waveFreq", "waveAmp",
       "palette", "colors", "background", "bg",
       "mouseForce", "mouseRadius", "mouseMode", "interactive", "autoMouse", "mouseSmooth",
-      "trail", "rainbow", "wrap",
+      "trail", "rainbow", "wrap", "wrapInset",
     ].forEach(function (k) {
       if (options[k] != null) overrides[k] = options[k];
     });
