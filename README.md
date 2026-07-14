@@ -74,6 +74,7 @@ npm start   # static server; open the printed URL (default http://localhost:8080
 | `count` / `density` | Particle count or relative density |
 | `scale`, `noiseAmp`, `spin`, `pull` | Low-level motion knobs |
 | `fillParent`, `interactive`, `seed`, `autoStart` | Field lifecycle |
+| `wrap` | Loop particles across all four canvas edges when `true` |
 | `mouseMode` | `repel` · `attract` · `swirl` · `off` |
 | `mouseForce` / `mouseRadius` | Cursor strength &amp; pixel radius (mode-tuned by default) |
 | `autoMouse` | Re-tune radius/force on mode change (default `true`) |

@@ -46,6 +46,7 @@ export interface DotfieldOptions {
   mouseRadius?: number;
   mouseSmooth?: number;
   autoMouse?: boolean;
+  wrap?: boolean;
 }
 
 export interface ModeInfo {

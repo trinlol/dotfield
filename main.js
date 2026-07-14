@@ -83,6 +83,12 @@
   /** Recent backdrop ids so refresh / rotate don't keep replaying the same look */
   var RECENT_KEY = "dotfield-backdrop-recent";
   var RECENT_MAX = 24;
+  var BACKDROP_MODE_IDS = [
+    "driftwood-calm-cw-mid",
+    "glide-calm-cw-mid",
+    "float-calm-cw-mid",
+    "drift-calm-cw-mid",
+  ];
 
   function loadRecentBackdrop() {
     try {
@@ -107,10 +113,7 @@
     } catch (e) {}
   }
 
-  /**
-   * Build the site-backdrop pool: calm + free full-canvas engines only.
-   * No serene/soft narrowing — that collapsed variety into similar looks.
-   */
+  /** Build the deliberately small site-backdrop pool. */
   function buildBackdropPool(excludeId, avoidRecent) {
     var recent = avoidRecent ? loadRecentBackdrop() : [];
     var recentSet = Object.create(null);
@@ -118,14 +121,11 @@
 
     var pool = [];
     var fallback = [];
-    for (var i = 0; i < modes.length; i++) {
-      var m = modes[i];
+    for (var i = 0; i < BACKDROP_MODE_IDS.length; i++) {
+      var m = Dotfield.getMode(BACKDROP_MODE_IDS[i]);
       if (!m || m.id === excludeId) continue;
-      if (!(m.calm || m.serene || isCalmModeId(m.id))) continue;
-      if (!isFullscreenMode(m)) continue;
       fallback.push(m);
-      if (recentSet[m.id]) continue;
-      pool.push(m);
+      if (!recentSet[m.id]) pool.push(m);
     }
     // If we've cycled through everything recently, clear history and use full pool
     if (!pool.length) {
@@ -209,6 +209,7 @@
     maxParticles: 1800,
     minParticles: 900,
     areaDivisor: 480,
+    wrap: true,
     glow: false,
     interactive: true,
     trail: false,

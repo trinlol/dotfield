@@ -175,6 +175,23 @@ test("customization options change motion and config snapshot", function () {
   );
 });
 
+test("wrap option is retained for looping particle fields", function () {
+  var sim = Dotfield.createSimulation({
+    width: 120,
+    height: 80,
+    count: 24,
+    seed: 11,
+    mode: "drift-calm-cw-mid",
+    wrap: true,
+  });
+  assert.strictEqual(sim.getSnapshot().params.wrap, true);
+  for (var i = 0; i < 240; i++) sim.step(1 / 30);
+  sim.getPositions().forEach(function (p) {
+    assert.ok(p.x >= 0 && p.x <= 120, "wrapped x remains in bounds");
+    assert.ok(p.y >= 0 && p.y <= 80, "wrapped y remains in bounds");
+  });
+});
+
 test("deterministic same seed", function () {
   var id = Dotfield.listModes()[20].id;
   function once() {

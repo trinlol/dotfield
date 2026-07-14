@@ -237,20 +237,28 @@
       // Subtle drift — smaller on calm for easy-on-the-eyes motion
       p.y += Math.sin(t * (calm ? 0.25 : 0.4) + p.phase) * (calm ? 0.012 : 0.02) * p.depth;
 
-      // Soft edge bounce (no wrap teleport pop)
-      if (p.x < 0) {
-        p.x = 0;
-        p.vx = Math.abs(p.vx) * 0.85;
-      } else if (p.x > w) {
-        p.x = w;
-        p.vx = -Math.abs(p.vx) * 0.85;
-      }
-      if (p.y < 0) {
-        p.y = 0;
-        p.vy = Math.abs(p.vy) * 0.85;
-      } else if (p.y > h) {
-        p.y = h;
-        p.vy = -Math.abs(p.vy) * 0.85;
+      if (params.wrap) {
+        // Toroidal bounds: particles leaving one edge re-enter on the opposite edge.
+        if (p.x < 0) p.x = w + (p.x % w);
+        else if (p.x > w) p.x = p.x % w;
+        if (p.y < 0) p.y = h + (p.y % h);
+        else if (p.y > h) p.y = p.y % h;
+      } else {
+        // Default bounded behavior for consumers that prefer a soft edge bounce.
+        if (p.x < 0) {
+          p.x = 0;
+          p.vx = Math.abs(p.vx) * 0.85;
+        } else if (p.x > w) {
+          p.x = w;
+          p.vx = -Math.abs(p.vx) * 0.85;
+        }
+        if (p.y < 0) {
+          p.y = 0;
+          p.vy = Math.abs(p.vy) * 0.85;
+        } else if (p.y > h) {
+          p.y = h;
+          p.vy = -Math.abs(p.vy) * 0.85;
+        }
       }
     }
 
@@ -390,7 +398,7 @@
       "morphBias", "rings", "clusters", "waveFreq", "waveAmp",
       "palette", "colors", "background", "bg", "count", "density",
       "mouseForce", "mouseRadius", "mouseMode", "interactive", "autoMouse", "mouseSmooth",
-      "trail", "rainbow",
+      "trail", "rainbow", "wrap",
     ];
     for (var i = 0; i < keys.length; i++) {
       var k = keys[i];

@@ -175,6 +175,7 @@
     if (options.autoMouse != null) out.autoMouse = !!options.autoMouse;
     if (options.mouseSmooth != null) out.mouseSmooth = Number(options.mouseSmooth);
     if (options.trail != null) out.trail = !!options.trail;
+    if (options.wrap != null) out.wrap = !!options.wrap;
     if (options.rainbow != null) {
       out.rainbow = !!options.rainbow;
       if (out.rainbow) {
@@ -207,4 +208,3 @@
     }
     return resolvePalette(params.palette);
   }
-

@@ -82,6 +82,20 @@ test("main.js locks backdrop and routes selectMode to preview only", function ()
   }
 });
 
+test("backdrop rotation is limited to the four requested modes", function () {
+  var main = fs.readFileSync(path.join(root, "main.js"), "utf8");
+  [
+    "driftwood-calm-cw-mid",
+    "glide-calm-cw-mid",
+    "float-calm-cw-mid",
+    "drift-calm-cw-mid",
+  ].forEach(function (id) {
+    assert.ok(main.indexOf('"' + id + '"') !== -1, "missing backdrop mode: " + id);
+  });
+  assert.ok(/wrap:\s*true/.test(main), "backdrop should enable edge wrapping");
+  assert.ok(main.indexOf("buildBackdropPool") !== -1, "backdrop pool remains randomized");
+});
+
 test("gallery has no pause-btn wiring", function () {
   var html = fs.readFileSync(path.join(root, "index.html"), "utf8");
   var main = fs.readFileSync(path.join(root, "main.js"), "utf8");
