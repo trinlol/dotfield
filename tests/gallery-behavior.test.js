@@ -93,7 +93,8 @@ test("backdrop rotation is limited to the four requested modes", function () {
     assert.ok(main.indexOf('"' + id + '"') !== -1, "missing backdrop mode: " + id);
   });
   assert.ok(/wrap:\s*true/.test(main), "backdrop should enable edge wrapping");
-  assert.ok(/wrapInset:\s*12/.test(main), "backdrop should clear the visible seam lane");
+  assert.ok(/wrapInset:\s*12/.test(main), "backdrop should use an off-screen wrap gutter");
+  assert.ok(/lib\/dotfield\.js\?v=4/.test(fs.readFileSync(path.join(root, "index.html"), "utf8")), "site should cache-bust the corrected runtime");
   assert.ok(/interactive:\s*false/.test(main), "backdrop should not push particles toward the viewport edge");
   assert.ok(main.indexOf("buildBackdropPool") !== -1, "backdrop pool remains randomized");
 });

@@ -192,7 +192,7 @@ test("wrap option is retained for looping particle fields", function () {
   });
 });
 
-test("wrap inset keeps particles out of the visible seam lane", function () {
+test("wrap inset creates an offscreen gutter instead of a visible seam lane", function () {
   var inset = 12;
   var sim = Dotfield.createSimulation({
     width: 120,
@@ -204,13 +204,72 @@ test("wrap inset keeps particles out of the visible seam lane", function () {
     wrapInset: inset,
     interactive: false,
   });
-  for (var step = 0; step < 240; step++) {
+  var enteredGutter = false;
+  for (var step = 0; step < 720; step++) {
     sim.step(1 / 60);
     sim.getPositions().forEach(function (p) {
-      assert.ok(p.x >= inset && p.x <= 120 - inset, "x entered the seam lane: " + p.x);
-      assert.ok(p.y >= inset && p.y <= 80 - inset, "y entered the seam lane: " + p.y);
+      assert.ok(p.x >= -inset && p.x <= 120 + inset, "x escaped the wrap gutter: " + p.x);
+      assert.ok(p.y >= -inset && p.y <= 80 + inset, "y escaped the wrap gutter: " + p.y);
+      if (p.x < 0 || p.x > 120 || p.y < 0 || p.y > 80) enteredGutter = true;
     });
   }
+  assert.ok(enteredGutter, "particles should leave the visible canvas before wrapping");
+});
+
+test("wrapped backdrop particles do not dwell or cluster along one border", function () {
+  var modes = [
+    "driftwood-calm-cw-mid",
+    "glide-calm-cw-mid",
+    "float-calm-cw-mid",
+    "drift-calm-cw-mid",
+  ];
+  modes.forEach(function (mode) {
+    var width = 600;
+    var height = 350;
+    var band = 24;
+    var count = 300;
+    var sim = Dotfield.createSimulation({
+      width: width,
+      height: height,
+      count: count,
+      seed: 42,
+      mode: mode,
+      wrap: true,
+      wrapInset: 12,
+      interactive: false,
+    });
+    var runs = new Array(count).fill(null).map(function () {
+      return { edge: "", frames: 0 };
+    });
+    var maxDwell = 0;
+    var maxCluster = 0;
+    for (var step = 0; step < 2400; step++) {
+      sim.step(1 / 60);
+      var clusters = { top: 0, bottom: 0, left: 0, right: 0 };
+      sim.getPositions().forEach(function (p, index) {
+        var edge = p.y >= 0 && p.y < band ? "top" :
+          p.y <= height && p.y > height - band ? "bottom" :
+          p.x >= 0 && p.x < band ? "left" :
+          p.x <= width && p.x > width - band ? "right" : "";
+        if (edge) clusters[edge]++;
+        if (edge && runs[index].edge === edge) runs[index].frames++;
+        else {
+          runs[index].edge = edge;
+          runs[index].frames = edge ? 1 : 0;
+        }
+        maxDwell = Math.max(maxDwell, runs[index].frames);
+      });
+      maxCluster = Math.max(
+        maxCluster,
+        clusters.top,
+        clusters.bottom,
+        clusters.left,
+        clusters.right
+      );
+    }
+    assert.ok(maxDwell < 90, mode + " particle dwelled at an edge for " + maxDwell + " frames");
+    assert.ok(maxCluster < 75, mode + " clustered " + maxCluster + " particles along one edge");
+  });
 });
 
 test("deterministic same seed", function () {

@@ -133,40 +133,32 @@ async function main() {
       const inset = 12;
       const logicalWidth = window.innerWidth;
       const logicalHeight = window.innerHeight;
-      const particlesInSeam = positions.filter((p) =>
-        p.x < inset || p.x > logicalWidth - inset ||
-        p.y < inset || p.y > logicalHeight - inset
+      const outsideGutter = positions.filter((p) =>
+        p.x < -inset || p.x > logicalWidth + inset ||
+        p.y < -inset || p.y > logicalHeight + inset
       ).length;
-
-      const ctx = canvas.getContext("2d");
-      const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-      const dpr = canvas.width / logicalWidth;
-      const clearBand = Math.max(1, Math.floor(7 * dpr));
-      const bg = [pixels[0], pixels[1], pixels[2]];
-      let changedEdgePixels = 0;
-      function changed(x, y) {
-        const offset = (y * canvas.width + x) * 4;
-        return Math.abs(pixels[offset] - bg[0]) > 2 ||
-          Math.abs(pixels[offset + 1] - bg[1]) > 2 ||
-          Math.abs(pixels[offset + 2] - bg[2]) > 2;
-      }
-      for (let y = 0; y < canvas.height; y++) {
-        for (let x = 0; x < clearBand; x++) {
-          if (changed(x, y)) changedEdgePixels++;
-          if (changed(canvas.width - 1 - x, y)) changedEdgePixels++;
-        }
-      }
-      for (let x = clearBand; x < canvas.width - clearBand; x++) {
-        for (let y = 0; y < clearBand; y++) {
-          if (changed(x, y)) changedEdgePixels++;
-          if (changed(x, canvas.height - 1 - y)) changedEdgePixels++;
-        }
-      }
-      return { particlesInSeam, changedEdgePixels, clearBand };
+      const band = 24;
+      const edgeCounts = { top: 0, bottom: 0, left: 0, right: 0 };
+      positions.forEach((p) => {
+        if (p.y >= 0 && p.y < band) edgeCounts.top++;
+        else if (p.y <= logicalHeight && p.y > logicalHeight - band) edgeCounts.bottom++;
+        else if (p.x >= 0 && p.x < band) edgeCounts.left++;
+        else if (p.x <= logicalWidth && p.x > logicalWidth - band) edgeCounts.right++;
+      });
+      return {
+        outsideGutter,
+        edgeCounts,
+        maxEdge: Math.max(...Object.values(edgeCounts)),
+        count: positions.length,
+        canvasWidth: canvas.width,
+      };
     });
     log("backdrop seam=" + JSON.stringify(backdropSeam));
-    if (backdropSeam.particlesInSeam !== 0 || backdropSeam.changedEdgePixels !== 0) {
-      throw new Error("backdrop particles or paint entered the cleared seam lane");
+    if (backdropSeam.outsideGutter !== 0) {
+      throw new Error("backdrop particle escaped the off-screen wrap gutter");
+    }
+    if (backdropSeam.maxEdge >= backdropSeam.count * 0.45) {
+      throw new Error("backdrop particles clustered along one border");
     }
 
     const targetMode = await page.evaluate(() => {

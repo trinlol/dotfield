@@ -210,7 +210,7 @@
     minParticles: 900,
     areaDivisor: 480,
     wrap: true,
-    wrapInset: 12,
+    wrapInset: 12, // off-screen gutter; avoids visible edge lanes
     glow: false,
     interactive: false,
     trail: false,

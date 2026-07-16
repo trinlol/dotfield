@@ -212,7 +212,7 @@ const positions = sim.getPositions();</code></pre>
             <tr><td><code>mode</code></td><td>string</td><td><code>flow-calm-cw-mid</code></td><td>Catalog mode id</td></tr>
             <tr><td><code>fillParent</code></td><td>boolean</td><td>contextual</td><td><code>true</code> sizes to window; <code>false</code> sizes to parent/canvas box</td></tr>
             <tr><td><code>wrap</code></td><td>boolean</td><td><code>false</code></td><td>Loop particles from each edge to the opposite edge instead of bouncing</td></tr>
-            <tr><td><code>wrapInset</code></td><td>number</td><td><code>0</code></td><td>Keep this many pixels clear at each seam and wrap immediately to the opposite inner edge, preventing clipped border lanes</td></tr>
+            <tr><td><code>wrapInset</code></td><td>number</td><td><code>0</code></td><td>Off-screen gutter used before wrapping to the opposite side; edge-tangent particles are gently carried through instead of forming border lanes</td></tr>
             <tr><td><code>width</code> / <code>height</code></td><td>number</td><td>—</td><td>Fixed logical size when set</td></tr>
             <tr><td><code>count</code></td><td>number</td><td>auto</td><td>Fixed particle count</td></tr>
             <tr><td><code>maxParticles</code> / <code>minParticles</code></td><td>number</td><td>5200 / 1200</td><td>Auto-density clamps</td></tr>
